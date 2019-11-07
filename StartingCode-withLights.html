@@ -27,7 +27,7 @@
 		<script>
 		
 		var scene, camera, renderer, controls, stats;
-		var cube_pivot;
+		var skullIsland, cube_pivot;
 		
 		function Start() {
 			scene = new THREE.Scene();
@@ -42,11 +42,10 @@
 			renderer.shadowMap.enabled = true;
 			document.body.appendChild( renderer.domElement );
 			
-			camera.position.set(0,7,25);
+			camera.position.set(0,5,25);
 			camera.lookAt( new THREE.Vector3(0,0,0));
 
 			var loader = new THREE.ObjectLoader();
-			var skullIsland; //variabile a cui assegnare modello dell'isola
 			loader.load(
 				//path del modello da caricare
 				"models/isola.json",
@@ -145,8 +144,16 @@
 			
 		}
 		
+		var clock = new THREE.Clock();
+		var time = 0;
+		var delta = 0; 
+
 		function Update() {
 			requestAnimationFrame( Update );
+
+			delta = clock.getDelta();
+			time += delta;
+			skullIsland.position.y = Math.abs(Math.sin(time/2));
 
 			cube_pivot.matrix.multiplyMatrices ( cube_pivot.matrix, new THREE.Matrix4().makeRotationY(0.005) );
 
