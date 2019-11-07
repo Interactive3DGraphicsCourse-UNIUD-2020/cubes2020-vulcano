@@ -27,6 +27,7 @@
 		<script>
 		
 		var scene, camera, renderer, controls, stats;
+		var cube_pivot;
 		
 		function Start() {
 			scene = new THREE.Scene();
@@ -73,13 +74,38 @@
 				}
 			);
 			
+			//ALTRI OGGETTI
 
+			//cube pivot
+			cube_pivot = new THREE.Object3D();
+			cube_pivot.matrix.makeTranslation(0,2,0);
+			cube_pivot.matrixAutoUpdate = false;
+			scene.add(cube_pivot);
+
+			//cube
+			var cube_geometry = new THREE.BoxGeometry(1,1,1);
+			var cube_texture = new THREE.TextureLoader().load('textures/stone.jpg');
+			var cube_material = new THREE.MeshPhongMaterial( { bumpMap: cube_texture, bumpScale: 0.04 } );
+			var cube = new THREE.Mesh( cube_geometry, cube_material );
+			cube.castShadow = true;
+			cube.receiveShadow = true;
+
+			cube.matrix.makeTranslation(13,0,0);
+			var cubeRotMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0), 25*Math.PI/180);
+			cube.matrix.multiplyMatrices ( cube.matrix, cubeRotMatrix); //ruoto cubo di 25 gradi attorno al suo asse locale z
+            var cubeScaleMatrix = new THREE.Matrix4().makeScale(3,1,1);
+			cube.matrix.multiplyMatrices ( cube.matrix, cubeScaleMatrix); //scalo cubo
+
+			cube.matrixAutoUpdate = false;
+
+			cube_pivot.add(cube);
+
+			//LUCI
 			hemiLight = new THREE.HemisphereLight( "#f0c9f5", "#353678", 0.3 );
 			hemiLight.position.set( -100, -500, 100 );
 			scene.add( hemiLight );
 
 			dirLight = new THREE.DirectionalLight( "#fff7d4", 0.4 );
-			//dirLight.color.setHSL( 0.1, 1, 0.95 );
 			dirLight.position.set( -1, -8, 6 );
 			dirLight.position.multiplyScalar( 50 );
 			scene.add( dirLight );
@@ -88,14 +114,17 @@
 			dirLight.shadow.mapSize.height = 1024;
 
 			
+			//STATS
 			stats = new Stats();
 			stats.domElement.style.position = 'absolute';
 			stats.domElement.style.top = '0px';
 			document.body.appendChild( stats.domElement );
 			
+
 			// uncomment if you need to draw coordinate axes when building the scene
 			//Coordinates.drawAllAxes();
 			
+			//CONTROLS
 			controls = new THREE.OrbitControls( camera );
 			controls.addEventListener( 'change', Render );
 			
@@ -104,6 +133,9 @@
 		
 		function Update() {
 			requestAnimationFrame( Update );
+
+			cube_pivot.matrix.multiplyMatrices ( cube_pivot.matrix, new THREE.Matrix4().makeRotationY(0.01) );
+
 			controls.update();  
 			stats.update();
 			Render();
