@@ -40,7 +40,7 @@
 			renderer.shadowMap.enabled = true;
 			document.body.appendChild( renderer.domElement );
 			
-			camera.position.set(2,2,2);
+			camera.position.set(0,7,25);
 			camera.lookAt( new THREE.Vector3(0,0,0));
 
 			var loader = new THREE.ObjectLoader();
@@ -52,6 +52,12 @@
 				//onLoad callback
 				function ( obj ) {
 					skullIsland = obj;
+		
+					skullIsland.position.y = 3;
+					skullIsland.rotation.y = -90 * Math.PI/180;
+					skullIsland.castShadow = true;
+					skullIsland.receiveShadow = true;
+
 					scene.add( obj );
 				},
 
@@ -65,16 +71,7 @@
 					console.error( 'An error happened' );
 				}
 			);
-
 			
-			var geometry = new THREE.BoxGeometry(1,1,1);
-			var texture = THREE.ImageUtils.loadTexture('textures/11635.jpg');
-			var material = new THREE.MeshPhongMaterial( { map: texture } );
-			var cube = new THREE.Mesh( geometry, material );
-			cube.castShadow = true;
-			cube.receiveShadow = true;
-			
-			scene.add( cube );
 
 			hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
 			hemiLight.color.setHSL( 0.6, 1, 0.6 );
