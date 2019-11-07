@@ -29,32 +29,6 @@
 		var scene, camera, renderer, controls, stats;
 		var skullIsland, cube_pivot;
 		var loadingComplete;
-		
-		function createLittleIsland(mesh1, mesh2, pivot, geom, mat){
-			mesh1 = new THREE.Mesh( geom, mat );
-			mesh1.castShadow = true;
-			mesh1.receiveShadow = true;
-
-			mesh1.matrix.makeTranslation(13,0,0);
-            var cubeScaleMatrix = new THREE.Matrix4().makeScale(1.7,1,1.7);
-			mesh1.matrix.multiplyMatrices ( mesh1.matrix, cubeScaleMatrix); //scalo cubo
-
-			mesh1.matrixAutoUpdate = false;
-
-			pivot.add(mesh1);
-
-			//aggiungo altro cubo da attaccare al primo
-			mesh2 = new THREE.Mesh( geom, mat );
-			mesh2.castShadow = true;
-			mesh2.receiveShadow = true;
-
-			mesh2.matrix.makeTranslation(13,-0.5,0);
-            var cubeScaleMatrix2 = new THREE.Matrix4().makeScale(1,0.5,1);
-			mesh2.matrix.multiplyMatrices ( mesh2.matrix, cubeScaleMatrix2); //scalo cubo
-
-			mesh2.matrixAutoUpdate = false;
-			pivot.add(mesh2);
-		}
 
 		loadingComplete = false;
 
@@ -105,22 +79,43 @@
 			
 			//ALTRI OGGETTI
 
-			//cube pivot
-			cube_pivot = new THREE.Object3D();
-			cube_pivot.matrix.makeTranslation(0,2,0);
-			var cube_pivotRotMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), 8*Math.PI/180);
-			cube_pivot.matrix.multiplyMatrices ( cube_pivot.matrix, cube_pivotRotMatrix); 
+			//little_island pivot
+			pivot = new THREE.Object3D();
+			pivot.matrix.makeTranslation(0,2,0);
+			var pivotRotMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), 8*Math.PI/180);
+			pivot.matrix.multiplyMatrices ( pivot.matrix, pivotRotMatrix); 
 
-			cube_pivot.matrixAutoUpdate = false;
-			scene.add(cube_pivot);
+			pivot.matrixAutoUpdate = false;
+			scene.add(pivot);
 
-			//cube
-			var cube_geometry = new THREE.BoxGeometry(1,1,1);
-			var cube_texture = new THREE.TextureLoader().load('textures/stone.jpg');
-			var cube_material = new THREE.MeshPhongMaterial( { bumpMap: cube_texture, bumpScale: 0.04 } );
+			//little_island
+			var drone_geometry = new THREE.BoxGeometry(1,1,1);
+			var drone_texture = new THREE.TextureLoader().load('textures/stone.jpg');
+			var drone_material = new THREE.MeshPhongMaterial( { bumpMap: drone_texture, bumpScale: 0.04 } );
 			
-			var cube, cube_bottom;
-			createLittleIsland(cube, cube_bottom, cube_pivot, cube_geometry, cube_material);
+			var mesh1 = new THREE.Mesh( drone_geometry, drone_material );
+			mesh1.castShadow = true;
+			mesh1.receiveShadow = true;
+
+			mesh1.matrix.makeTranslation(13,0,0);
+            var droneScaleMatrix = new THREE.Matrix4().makeScale(1.7,1,1.7);
+			mesh1.matrix.multiplyMatrices ( mesh1.matrix, droneScaleMatrix); //scalo cubo
+
+			mesh1.matrixAutoUpdate = false;
+
+			pivot.add(mesh1);
+
+			//aggiungo altro cubo da attaccare al primo
+			var mesh2 = new THREE.Mesh( drone_geometry, drone_material );
+			mesh2.castShadow = true;
+			mesh2.receiveShadow = true;
+
+			mesh2.matrix.makeTranslation(13,-0.5,0);
+            var droneScaleMatrix2 = new THREE.Matrix4().makeScale(1,0.5,1);
+			mesh2.matrix.multiplyMatrices ( mesh2.matrix, droneScaleMatrix2); //scalo cubo
+
+			mesh2.matrixAutoUpdate = false;
+			pivot.add(mesh2);
 
 
 			//LUCI
@@ -166,7 +161,7 @@
 				time += delta;
 				skullIsland.position.y = (Math.sin(time)+1)/2.6;
 
-				cube_pivot.matrix.multiplyMatrices ( cube_pivot.matrix, new THREE.Matrix4().makeRotationY(0.005));
+				pivot.matrix.multiplyMatrices ( pivot.matrix, new THREE.Matrix4().makeRotationY(0.005));
 
 				controls.update();  
 				stats.update();
@@ -185,7 +180,6 @@
 			
 		</script>
 
-
-		</div>
+		
 	</body>
 </html>
