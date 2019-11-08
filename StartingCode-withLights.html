@@ -30,7 +30,7 @@
 		var skullIsland, pivot1, pivot2;
 		var loadingComplete;
 		var raycaster, mouse;
-		var mes1, mesh2, mesh2, mesh4;
+		var mes1, mesh2;
 
 		loadingComplete = false;
 		function Start() {
@@ -95,7 +95,7 @@
 			var LI_texture = new THREE.TextureLoader().load('textures/stone.jpg');
 			var LI_material = new THREE.MeshPhongMaterial( { bumpMap: LI_texture, bumpScale: 0.04 } );
 			
-			var mesh1 = new THREE.Mesh( LI_geometry, LI_material );
+			mesh1 = new THREE.Mesh( LI_geometry, LI_material );
 			mesh1.name = "island1";
 			mesh1.castShadow = true;
 			mesh1.receiveShadow = true;
@@ -106,11 +106,11 @@
 			pivot1.add(mesh1);
 
 			//little_island 2
-			var mesh2 = new THREE.Mesh( LI_geometry, LI_material );
+			mesh2 = new THREE.Mesh( LI_geometry, LI_material );
 			mesh2.name = "island2";
 			mesh2.castShadow = true;
 			mesh2.receiveShadow = true;
-			mesh2.matrix.makeTranslation(8,0,0);
+			mesh2.matrix.makeTranslation(-11,-2,0);
 			mesh2.matrix.multiplyMatrices ( mesh2.matrix, LIScaleMatrix); //scalo cubo
 			mesh2.matrixAutoUpdate = false;
 			pivot2.add(mesh2);
@@ -172,9 +172,9 @@
 
 				delta = clock.getDelta();
 				time += delta;
-				skullIsland.position.y = (Math.sin(time)+1)/2.6;
-				pivot1.matrix.multiplyMatrices ( pivot1.matrix, new THREE.Matrix4().makeRotationY(0.005));
-				pivot2.matrix.multiplyMatrices ( pivot2.matrix, new THREE.Matrix4().makeRotationY(-0.01));
+				skullIsland.position.y = (Math.sin(time)+1)/4.5;
+				pivot1.matrix.multiplyMatrices ( pivot1.matrix, new THREE.Matrix4().makeRotationY((Math.sin(time))/1100));
+				pivot2.matrix.multiplyMatrices ( pivot2.matrix, new THREE.Matrix4().makeRotationY(-(Math.sin(time))/1100));
 
 
 				//aggiorna picking ray con posizione di mouse e camera
@@ -187,29 +187,40 @@
 						var current = intersects[i].object;
 						console.log(intersects[i].object.name); //POI TOGLI
 						if(current.name == "island1"){
+							//FA NOTTE
 							//aggiorno delta e tempo passato da quando è iniziato il mouseover su island1
 							time2 += delta;
 							//faccio ruotare island1 a una velocità proporzionale alla durata del mouseover
-							var m = new THREE.Matrix4().makeRotationY(time2*0.03);
+							var m = new THREE.Matrix4().makeRotationY(time2*0.3);
 							current.matrix.multiplyMatrices ( current.matrix, m);
-							if(dirLight.intensity > 0){
-								dirLight.intensity-=0.01;
+							if(dirLight.intensity > 0.15 && hemiLight.intensity > 0.15){
+								dirLight.intensity-=0.006;
+								hemiLight.intensity-=0.006;
 							}
-							alpha_background+=0.01;
-							renderer.setClearColor( "#1a053a", alpha_background );
+							if(alpha_background < 0.7){	
+								alpha_background+=0.02;
+								renderer.setClearColor( "#1a053a", alpha_background );
+							}
 							
 
 
 						}else if(current.name == "island2"){
+							//FA GIORNO
 							//aggiorno delta e tempo passato da quando è iniziato il mouseover su island2
 							time3 += delta;
 							//faccio ruotare island2 a una velocità proporzionale alla durata del mouseover
-							var m = new THREE.Matrix4().makeRotationX(time3*0.03);
+							var m = new THREE.Matrix4().makeRotationX(time3*0.3);
 							current.matrix.multiplyMatrices ( current.matrix, m);
 							alpha_background-=0.01;
 							renderer.setClearColor( "#1a053a", alpha_background );
-							if(dirLight.intensity < 0.4){
+							if(dirLight.intensity < 0.39 && hemiLight.intensity < 0.29){
 								dirLight.intensity+=0.01;
+								hemiLight.intensity += 0.01;
+							}
+							if(alpha_background > 0.01){	
+								alpha_background-=0.01;
+								//console.log(alpha_background);
+								renderer.setClearColor( "#1a053a", alpha_background );
 							}
 
 						}else{
