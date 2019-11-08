@@ -76,14 +76,14 @@
 			//ALTRI OGGETTI
 			//little_island pivot
 			pivot1 = new THREE.Object3D();
-			pivot1.matrix.makeTranslation(0,2,0);
+			pivot1.matrix.makeTranslation(0,1,0);
 			var pivotRotMatrix1 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), 8*Math.PI/180);
 			pivot1.matrix.multiplyMatrices ( pivot1.matrix, pivotRotMatrix1); 
 			pivot1.matrixAutoUpdate = false;
 			scene.add(pivot1);
 
 			pivot2 = new THREE.Object3D();
-			pivot2.matrix.makeTranslation(0,-2,0);
+			pivot2.matrix.makeTranslation(0,-5,0);
 			var pivotRotMatrix2 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), -5*Math.PI/180);
 			pivot2.matrix.multiplyMatrices ( pivot2.matrix, pivotRotMatrix2); 
 			pivot2.matrixAutoUpdate = false;
@@ -93,9 +93,10 @@
 			//little_island 1
 			var LI_geometry = new THREE.BoxGeometry(1,1,1);
 			var LI_texture = new THREE.TextureLoader().load('textures/stone.jpg');
-			var LI_material = new THREE.MeshPhongMaterial( { bumpMap: LI_texture, bumpScale: 0.04 } );
-			
-			mesh1 = new THREE.Mesh( LI_geometry, LI_material );
+			var LI_material1 = new THREE.MeshPhongMaterial( { bumpMap: LI_texture, bumpScale: 0.04, color:"#6f594d" } );
+			var LI_material2 = new THREE.MeshPhongMaterial( { bumpMap: LI_texture, bumpScale: 0.04 } );
+
+			mesh1 = new THREE.Mesh( LI_geometry, LI_material1 );
 			mesh1.name = "islandNight";
 			mesh1.castShadow = true;
 			mesh1.receiveShadow = true;
@@ -106,11 +107,11 @@
 			pivot1.add(mesh1);
 
 			//little_island 2
-			mesh2 = new THREE.Mesh( LI_geometry, LI_material );
+			mesh2 = new THREE.Mesh( LI_geometry, LI_material2 );
 			mesh2.name = "islandDay";
 			mesh2.castShadow = true;
 			mesh2.receiveShadow = true;
-			mesh2.matrix.makeTranslation(-11,-2,0);
+			mesh2.matrix.makeTranslation(-11,0,0);
 			mesh2.matrix.multiplyMatrices ( mesh2.matrix, LIScaleMatrix); //scalo cubo
 			mesh2.matrixAutoUpdate = false;
 			pivot2.add(mesh2);
@@ -174,7 +175,7 @@
 				time += delta;
 				skullIsland.position.y = (Math.sin(time)+1)/4.5;
 				pivot1.matrix.multiplyMatrices ( pivot1.matrix, new THREE.Matrix4().makeRotationY((Math.sin(time))/1100));
-				pivot2.matrix.multiplyMatrices ( pivot2.matrix, new THREE.Matrix4().makeRotationY(-(Math.sin(time))/1100));
+				pivot2.matrix.multiplyMatrices ( pivot2.matrix, new THREE.Matrix4().makeRotationY(-(Math.sin(time))/1300));
 
 
 				//aggiorna picking ray con posizione di mouse e camera
