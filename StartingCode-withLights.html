@@ -96,7 +96,7 @@
 			var LI_material = new THREE.MeshPhongMaterial( { bumpMap: LI_texture, bumpScale: 0.04 } );
 			
 			mesh1 = new THREE.Mesh( LI_geometry, LI_material );
-			mesh1.name = "island1";
+			mesh1.name = "islandNight";
 			mesh1.castShadow = true;
 			mesh1.receiveShadow = true;
 			mesh1.matrix.makeTranslation(11,0,0);
@@ -107,7 +107,7 @@
 
 			//little_island 2
 			mesh2 = new THREE.Mesh( LI_geometry, LI_material );
-			mesh2.name = "island2";
+			mesh2.name = "islandDay";
 			mesh2.castShadow = true;
 			mesh2.receiveShadow = true;
 			mesh2.matrix.makeTranslation(-11,-2,0);
@@ -185,12 +185,11 @@
 					
 					for ( var i = 0; i < intersects.length; i++ ) {
 						var current = intersects[i].object;
-						console.log(intersects[i].object.name); //POI TOGLI
-						if(current.name == "island1"){
+						if(current.name == "islandNight"){
 							//FA NOTTE
-							//aggiorno delta e tempo passato da quando è iniziato il mouseover su island1
+							//aggiorno delta e tempo passato da quando è iniziato il mouseover su islandNight
 							time2 += delta;
-							//faccio ruotare island1 a una velocità proporzionale alla durata del mouseover
+							//faccio ruotare islandNight a una velocità proporzionale alla durata del mouseover
 							var m = new THREE.Matrix4().makeRotationY(time2*0.3);
 							current.matrix.multiplyMatrices ( current.matrix, m);
 							if(dirLight.intensity > 0.15 && hemiLight.intensity > 0.15){
@@ -204,11 +203,11 @@
 							
 
 
-						}else if(current.name == "island2"){
+						}else if(current.name == "islandDay"){
 							//FA GIORNO
-							//aggiorno delta e tempo passato da quando è iniziato il mouseover su island2
+							//aggiorno delta e tempo passato da quando è iniziato il mouseover su islandDay
 							time3 += delta;
-							//faccio ruotare island2 a una velocità proporzionale alla durata del mouseover
+							//faccio ruotare islandDay a una velocità proporzionale alla durata del mouseover
 							var m = new THREE.Matrix4().makeRotationX(time3*0.3);
 							current.matrix.multiplyMatrices ( current.matrix, m);
 							alpha_background-=0.01;
