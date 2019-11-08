@@ -27,15 +27,12 @@
 		<script>
 		
 		var scene, camera, renderer, controls, stats;
-		var skullIsland, cube_pivot;
+		var skullIsland, pivot1, pivot2;
 		var loadingComplete;
-
 		loadingComplete = false;
-
 		function Start() {
 			scene = new THREE.Scene();
 			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
 			renderer = new THREE.WebGLRenderer( {antialias: true, alpha:true} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			renderer.setClearColor( "#7f0996", 0.3 );
@@ -47,12 +44,10 @@
 			
 			camera.position.set(0,5,25);
 			camera.lookAt( new THREE.Vector3(0,0,0));
-
 			var loader = new THREE.ObjectLoader();
 			loader.load(
 				//path del modello da caricare
 				"models/isola.json",
-
 				//onLoad callback
 				function ( obj ) {
 					skullIsland = obj;
@@ -61,16 +56,13 @@
 					skullIsland.rotation.y = -90 * Math.PI/180;
 					skullIsland.castShadow = true;
 					skullIsland.receiveShadow = true;
-
 					scene.add( obj );
 					loadingComplete = true;
 				},
-
 				//onProgress callback
 				function ( xhr ) {
 					console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
 				},
-
 				//onError callback
 				function ( err ) {
 					console.error( 'An error happened' );
@@ -78,51 +70,72 @@
 			);
 			
 			//ALTRI OGGETTI
-
 			//little_island pivot
-			pivot = new THREE.Object3D();
-			pivot.matrix.makeTranslation(0,2,0);
-			var pivotRotMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), 8*Math.PI/180);
-			pivot.matrix.multiplyMatrices ( pivot.matrix, pivotRotMatrix); 
+			pivot1 = new THREE.Object3D();
+			pivot1.matrix.makeTranslation(0,2,0);
+			var pivotRotMatrix1 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), 8*Math.PI/180);
+			pivot1.matrix.multiplyMatrices ( pivot1.matrix, pivotRotMatrix1); 
+			pivot1.matrixAutoUpdate = false;
+			scene.add(pivot1);
 
-			pivot.matrixAutoUpdate = false;
-			scene.add(pivot);
+			pivot2 = new THREE.Object3D();
+			pivot2.matrix.makeTranslation(0,-2,0);
+			var pivotRotMatrix2 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), -5*Math.PI/180);
+			pivot2.matrix.multiplyMatrices ( pivot2.matrix, pivotRotMatrix2); 
+			pivot2.matrixAutoUpdate = false;
+			scene.add(pivot2);
 
-			//little_island
-			var drone_geometry = new THREE.BoxGeometry(1,1,1);
-			var drone_texture = new THREE.TextureLoader().load('textures/stone.jpg');
-			var drone_material = new THREE.MeshPhongMaterial( { bumpMap: drone_texture, bumpScale: 0.04 } );
+
+			//little_island 1
+			var LI_geometry = new THREE.BoxGeometry(1,1,1);
+			var LI_texture = new THREE.TextureLoader().load('textures/stone.jpg');
+			var LI_material = new THREE.MeshPhongMaterial( { bumpMap: LI_texture, bumpScale: 0.04 } );
 			
-			var mesh1 = new THREE.Mesh( drone_geometry, drone_material );
+			var mesh1 = new THREE.Mesh( LI_geometry, LI_material );
 			mesh1.castShadow = true;
 			mesh1.receiveShadow = true;
-
 			mesh1.matrix.makeTranslation(13,0,0);
-            var droneScaleMatrix = new THREE.Matrix4().makeScale(1.7,1,1.7);
-			mesh1.matrix.multiplyMatrices ( mesh1.matrix, droneScaleMatrix); //scalo cubo
-
+            var LIScaleMatrix = new THREE.Matrix4().makeScale(1.7,1,1.7);
+			mesh1.matrix.multiplyMatrices ( mesh1.matrix, LIScaleMatrix); //scalo cubo
 			mesh1.matrixAutoUpdate = false;
-
-			pivot.add(mesh1);
+			pivot1.add(mesh1);
 
 			//aggiungo altro cubo da attaccare al primo
-			var mesh2 = new THREE.Mesh( drone_geometry, drone_material );
+			var mesh2 = new THREE.Mesh( LI_geometry, LI_material );
 			mesh2.castShadow = true;
 			mesh2.receiveShadow = true;
-
 			mesh2.matrix.makeTranslation(13,-0.5,0);
-            var droneScaleMatrix2 = new THREE.Matrix4().makeScale(1,0.5,1);
-			mesh2.matrix.multiplyMatrices ( mesh2.matrix, droneScaleMatrix2); //scalo cubo
-
+            var LIScaleMatrix2 = new THREE.Matrix4().makeScale(1,0.5,1);
+			mesh2.matrix.multiplyMatrices ( mesh2.matrix, LIScaleMatrix2); //scalo cubo
 			mesh2.matrixAutoUpdate = false;
-			pivot.add(mesh2);
+			pivot1.add(mesh2);
+
+			//little_island 2
+			
+			var mesh3 = new THREE.Mesh( LI_geometry, LI_material );
+			mesh3.castShadow = true;
+			mesh3.receiveShadow = true;
+			mesh3.matrix.makeTranslation(8,0,0);
+			mesh3.matrix.multiplyMatrices ( mesh3.matrix, LIScaleMatrix); //scalo cubo
+			mesh3.matrixAutoUpdate = false;
+			pivot2.add(mesh3);
+
+			//aggiungo altro cubo da attaccare al primo
+			var mesh4 = new THREE.Mesh( LI_geometry, LI_material );
+			mesh4castShadow = true;
+			mesh4.receiveShadow = true;
+			mesh4.matrix.makeTranslation(8,-0.5,0);
+            var LIScaleMatrix2 = new THREE.Matrix4().makeScale(1,0.5,1);
+			mesh4.matrix.multiplyMatrices ( mesh4.matrix, LIScaleMatrix2); //scalo cubo
+			mesh4.matrixAutoUpdate = false;
+			pivot2.add(mesh4);
+
 
 
 			//LUCI
 			hemiLight = new THREE.HemisphereLight( "#f0c9f5", "#353678", 0.3 );
 			hemiLight.position.set( -100, -500, 100 );
 			scene.add( hemiLight );
-
 			dirLight = new THREE.DirectionalLight( "#fff7d4", 0.4 );
 			dirLight.position.set( -1, -8, 6 );
 			dirLight.position.multiplyScalar( 50 );
@@ -130,7 +143,6 @@
 			dirLight.castShadow = true;
 			dirLight.shadow.mapSize.width = 1024;
 			dirLight.shadow.mapSize.height = 1024;
-
 			
 			//STATS
 			stats = new Stats();
@@ -138,7 +150,6 @@
 			stats.domElement.style.top = '0px';
 			document.body.appendChild( stats.domElement );
 			
-
 			// uncomment if you need to draw coordinate axes when building the scene
 			//Coordinates.drawAllAxes();
 			
@@ -152,7 +163,6 @@
 		var clock = new THREE.Clock();
 		var time = 0;
 		var delta = 0; 
-
 		function Update() {
 			
 			requestAnimationFrame( Update );
@@ -160,9 +170,8 @@
 				delta = clock.getDelta();
 				time += delta;
 				skullIsland.position.y = (Math.sin(time)+1)/2.6;
-
-				pivot.matrix.multiplyMatrices ( pivot.matrix, new THREE.Matrix4().makeRotationY(0.005));
-
+				pivot1.matrix.multiplyMatrices ( pivot1.matrix, new THREE.Matrix4().makeRotationY(0.005));
+				pivot2.matrix.multiplyMatrices ( pivot2.matrix, new THREE.Matrix4().makeRotationY(-0.01));
 				controls.update();  
 				stats.update();
 				Render();
