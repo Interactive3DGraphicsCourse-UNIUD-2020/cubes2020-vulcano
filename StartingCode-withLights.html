@@ -6,7 +6,7 @@
 		body {
 			font-family: Monospace;
 			background-color: #f0f0f0;
-  			background-image: linear-gradient(#353678, #fff0ad, #fff761);
+  			background-image: linear-gradient(#4f2c82, #d9ac9f, #d9b071);
 			margin: 0px;
 			overflow: hidden;
 		}
@@ -38,7 +38,7 @@
 			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 			renderer = new THREE.WebGLRenderer( {antialias: true, alpha:true} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
-			renderer.setClearColor( "#7f0996", 0.3 );
+			renderer.setClearColor( "#1a053a", 0 );
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.gammaInput = true;
 			renderer.gammaOutput = true;
@@ -48,6 +48,7 @@
 			camera.position.set(0,5,25);
 			camera.lookAt( new THREE.Vector3(0,0,0));
 			var loader = new THREE.ObjectLoader();
+			
 			loader.load(
 				//path del modello da caricare
 				"models/isola.json",
@@ -98,8 +99,8 @@
 			mesh1.name = "island1";
 			mesh1.castShadow = true;
 			mesh1.receiveShadow = true;
-			mesh1.matrix.makeTranslation(13,0,0);
-            var LIScaleMatrix = new THREE.Matrix4().makeScale(1.7,1,2);
+			mesh1.matrix.makeTranslation(11,0,0);
+            var LIScaleMatrix = new THREE.Matrix4().makeScale(1.7,1,1.7);
 			mesh1.matrix.multiplyMatrices ( mesh1.matrix, LIScaleMatrix); //scalo cubo
 			mesh1.matrixAutoUpdate = false;
 			pivot1.add(mesh1);
@@ -119,6 +120,7 @@
 			hemiLight = new THREE.HemisphereLight( "#f0c9f5", "#353678", 0.3 );
 			hemiLight.position.set( -100, -500, 100 );
 			scene.add( hemiLight );
+
 			dirLight = new THREE.DirectionalLight( "#fff7d4", 0.4 );
 			dirLight.position.set( -1, -8, 6 );
 			dirLight.position.multiplyScalar( 50 );
@@ -162,6 +164,7 @@
 		var time2 = 0;
 		var time3 = 0;
 		var delta = 0; 
+		var alpha_background = 0;
 
 		function Update() {
 			requestAnimationFrame( Update );
@@ -189,6 +192,13 @@
 							//faccio ruotare island1 a una velocità proporzionale alla durata del mouseover
 							var m = new THREE.Matrix4().makeRotationY(time2*0.03);
 							current.matrix.multiplyMatrices ( current.matrix, m);
+							if(dirLight.intensity > 0){
+								dirLight.intensity-=0.01;
+							}
+							alpha_background+=0.01;
+							renderer.setClearColor( "#1a053a", alpha_background );
+							
+
 
 						}else if(current.name == "island2"){
 							//aggiorno delta e tempo passato da quando è iniziato il mouseover su island2
@@ -196,6 +206,12 @@
 							//faccio ruotare island2 a una velocità proporzionale alla durata del mouseover
 							var m = new THREE.Matrix4().makeRotationX(time3*0.03);
 							current.matrix.multiplyMatrices ( current.matrix, m);
+							alpha_background-=0.01;
+							renderer.setClearColor( "#1a053a", alpha_background );
+							if(dirLight.intensity < 0.4){
+								dirLight.intensity+=0.01;
+							}
+
 						}else{
 							//do something else (skullIsland)
 						}
