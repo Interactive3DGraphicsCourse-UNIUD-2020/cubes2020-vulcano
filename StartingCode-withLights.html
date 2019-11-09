@@ -182,7 +182,7 @@
 			
 			//TERRAIN
 			var img = new Image();
-			img.src = "textures/heightmap2.png";
+			img.src = "textures/heightmap_terreno.png";
 			img.onload = function () {
 				//get height data from img
 				var data = getHeightData(img, 0.05);
@@ -200,9 +200,10 @@
 				var k = 0; //indice di data
 				var i = 0, j = 0;
 				var terrain_group = new THREE.Object3D();
-				terrain_group.position.y = -20;
-				terrain_group.position.x = -img.width/2;
+				terrain_group.position.y = -30;
+				terrain_group.position.x = -img.width/2 + 20;
 				terrain_group.position.z = -img.height/2;
+				terrain_group.rotation.y = Math.PI;
 
 				scene.add(terrain_group);
 
