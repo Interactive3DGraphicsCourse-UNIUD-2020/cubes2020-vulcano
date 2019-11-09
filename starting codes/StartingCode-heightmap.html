@@ -26,10 +26,8 @@
 		<script>
 		
 		var scene, camera, renderer, controls, stats;
-		
 		//return array with height data from img, taken from: http://danni-three.blogspot.it/2013/09/threejs-heightmaps.html
 		function getHeightData(img,scale) {
-  
 		 if (scale == undefined) scale=1;
   
 		    var canvas = document.createElement( 'canvas' );
@@ -38,24 +36,25 @@
 		    var context = canvas.getContext( '2d' );
  
 		    var size = img.width * img.height;
-			console.log(size);
+
 		    var data = new Float32Array( size );
  
 		    context.drawImage(img,0,0);
  
 		    for ( var i = 0; i < size; i ++ ) {
-		        data[i] = 0
+		        data[i] = 0;
 		    }
  
-		    var imgd = context.getImageData(0, 0, img.width, img.height);
-		    var pix = imgd.data;
- 
+		    var imgd = context.getImageData(0, 0, img.width, img.height); //copies the pixel data (RGBA values) for a specified rectangle on the canvas
+		    var pix = imgd.data; //array in which the information is held (elements 0, 1, 2, 3 refer to the first pixel, then 4, 5, 6, 7 to the second etc.)
+			
 		    var j=0;
 		    for (var i = 0; i<pix.length; i +=4) {
-		        var all = pix[i]+pix[i+1]+pix[i+2];  // all is in range 0 - 255*3
-		        data[j++] = scale*all/3;   
+				var all = pix[i]+pix[i+1]+pix[i+2];
+				data[j++] = scale*all/3; // all (R+G+B) is in range 0 - 255*3 (and R = G = B)
+				//console.log("j-esimo data[j]: "+data[j-1]);
 		    }
-     
+			     
 		    return data;
 		}
 		
@@ -68,14 +67,14 @@
 			renderer.setClearColor( 0xf0f0f0 );
 			document.body.appendChild( renderer.domElement );
 			
-			camera.position.set(3,4,6);
+			camera.position.set(100,100,100);
 			camera.lookAt( new THREE.Vector3(0,0,0));
 			
-			var geometry = new THREE.BoxGeometry(1,1,1);
+			/*var geometry = new THREE.BoxGeometry(1,1,1);
 			var material = new THREE.MeshBasicMaterial( { color: 0xaaaaaa } );
 			var cube = new THREE.Mesh( geometry, material );
 			
-			scene.add( cube );
+			scene.add( cube );*/
 			
 			stats = new Stats();
 			stats.domElement.style.position = 'absolute';
@@ -88,20 +87,62 @@
 			controls = new THREE.OrbitControls( camera );
 			controls.addEventListener( 'change', Render );
 			
+			
 			// terrain
 			var img = new Image();
+			img.src = "textures/heightmap2.png";
 			img.onload = function () {
-  
 				//get height data from img
-				var data = getHeightData(img,0.1);
-  
-				// load img source
-				img.src = "textures/heightmap2.png";
+				var data = getHeightData(img,0.2);
+
+				var xImg = img.width;
+				var yImg = img.height;
+				//console.log("img.width and width: "+img.width+" "+img.height);
+
+				var terrain_geometry = new THREE.BoxGeometry(1,1,1);
+				var terrain_material = new THREE.MeshBasicMaterial( { color: "#6f594d"} );
+				
+				var terrain_edges_geo = new THREE.EdgesGeometry( terrain_geometry ); 
+				var terrain_edges_mat = new THREE.LineBasicMaterial( { color: "#d9b071", linewidth: 2 } );
+
+				var k = 0; //indice di data
+				var i = 0, j = 0;
+				var terrain_group = new THREE.Object3D();
+				terrain_group.position.y = -10;
+				scene.add(terrain_group);
+
+				for(i=0; i<xImg; i++){
+					for(j=0; j<yImg; j++){
+						//console.log("for i j "+i+" "+j);
+						terrain_cube = new THREE.Mesh( terrain_geometry, terrain_material );
+						console.log("data[k], k: "+ data[k] +" "+k);
+
+						terrain_cube.matrix.makeTranslation(i+1, data[k]/2 ,j); //traslo in su di data[k]/2 perché poi scalerò la dimensione y
+						var scaleM = new THREE.Matrix4().makeScale(1, data[k] ,1);
+						terrain_cube.matrix.multiplyMatrices ( terrain_cube.matrix, scaleM); 
+						terrain_cube.matrixAutoUpdate = false;
+						terrain_group.add(terrain_cube);
+
+						//disegno gli spigoli
+						var terrain_cube_edges = new THREE.LineSegments( terrain_edges_geo, terrain_edges_mat );
+						terrain_cube.add( terrain_cube_edges );
+
+						k++;
+					}
+				}
 			}
 			
-			
 		}
-		
+
+		function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
 		function Update() {
 			requestAnimationFrame( Update );
 			controls.update();  
