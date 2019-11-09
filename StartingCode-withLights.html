@@ -27,7 +27,7 @@
 		<script>
 		
 		var scene, camera, renderer, controls, stats;
-		var skullIsland, pivot1, pivot2;
+		var skullIsland, pivot1, pivot2, terrain_group;
 		var loadingComplete;
 		var raycaster, mouse;
 		var mes1, mesh2;
@@ -76,7 +76,7 @@
 			renderer.shadowMap.enabled = true;
 			document.body.appendChild( renderer.domElement );
 			
-			camera.position.set(0,5,25);
+			camera.position.set(0,5,30);
 			camera.lookAt( new THREE.Vector3(0,0,0));
 			var loader = new THREE.ObjectLoader();
 			
@@ -192,23 +192,23 @@
 				//console.log("img.width and width: "+img.width+" "+img.height);
 
 				var terrain_geometry = new THREE.BoxGeometry(1,1,1);
-				var terrain_material = new THREE.MeshBasicMaterial( { color: "#6f594d"} );
+				var terrain_material = new THREE.MeshPhongMaterial( { color: "#80543d"} );
 				
 				var terrain_edges_geo = new THREE.EdgesGeometry( terrain_geometry ); 
 				var terrain_edges_mat = new THREE.LineBasicMaterial( { color: "#d9b071", linewidth: 2 } );
 
 				var k = 0; //indice di data
 				var i = 0, j = 0;
-				var terrain_group = new THREE.Object3D();
+				terrain_group = new THREE.Object3D();
 				terrain_group.position.y = -30;
-				terrain_group.position.x = -img.width/2 + 20;
-				terrain_group.position.z = -img.height/2;
-				terrain_group.rotation.y = Math.PI;
+				terrain_group.position.x = img.width/2;
+				terrain_group.position.z = -img.height;
+				terrain_group.rotation.y = -90 * Math.PI/180;
 
 				scene.add(terrain_group);
 
-				for(i=0; i<xImg; i++){
-					for(j=0; j<yImg; j++){
+				for(i=0; i<yImg; i++){
+					for(j=0; j<xImg; j++){
 						//console.log("for i j "+i+" "+j);
 						terrain_cube = new THREE.Mesh( terrain_geometry, terrain_material );
 						console.log("data[k], k: "+ data[k] +" "+k);
@@ -217,6 +217,8 @@
 						var scaleM = new THREE.Matrix4().makeScale(1, data[k] ,1);
 						terrain_cube.matrix.multiplyMatrices ( terrain_cube.matrix, scaleM); 
 						terrain_cube.matrixAutoUpdate = false;
+						terrain_cube.castShadow = true;
+						terrain_cube.receiveShadow = true
 						terrain_group.add(terrain_cube);
 
 						//disegno gli spigoli
@@ -251,6 +253,7 @@
 				delta = clock.getDelta();
 				time += delta;
 				skullIsland.position.y = (Math.sin(time)+1)/4.5;
+				terrain_group.position.y = -30 + ((Math.sin(time))/4.5);
 				pivot1.matrix.multiplyMatrices ( pivot1.matrix, new THREE.Matrix4().makeRotationY((Math.sin(time))/1100));
 				pivot2.matrix.multiplyMatrices ( pivot2.matrix, new THREE.Matrix4().makeRotationY(-(Math.sin(time))/1300));
 
