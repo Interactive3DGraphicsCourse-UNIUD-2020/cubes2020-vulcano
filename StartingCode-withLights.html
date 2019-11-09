@@ -33,6 +33,37 @@
 		var mes1, mesh2;
 
 		loadingComplete = false;
+		function getHeightData(img,scale) {
+		 if (scale == undefined) scale=1;
+  
+		    var canvas = document.createElement( 'canvas' );
+		    canvas.width = img.width;
+		    canvas.height = img.height;
+		    var context = canvas.getContext( '2d' );
+ 
+		    var size = img.width * img.height;
+
+		    var data = new Float32Array( size );
+ 
+		    context.drawImage(img,0,0);
+ 
+		    for ( var i = 0; i < size; i ++ ) {
+		        data[i] = 0;
+		    }
+ 
+		    var imgd = context.getImageData(0, 0, img.width, img.height); //copies the pixel data (RGBA values) for a specified rectangle on the canvas
+		    var pix = imgd.data; //array in which the information is held (elements 0, 1, 2, 3 refer to the first pixel, then 4, 5, 6, 7 to the second etc.)
+			
+		    var j=0;
+		    for (var i = 0; i<pix.length; i +=4) {
+				var all = pix[i]+pix[i+1]+pix[i+2];
+				data[j++] = scale*all/3; // all (R+G+B) is in range 0 - 255*3 (and R = G = B)
+				//console.log("j-esimo data[j]: "+data[j-1]);
+		    }
+			     
+		    return data;
+		}
+
 		function Start() {
 			scene = new THREE.Scene();
 			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -149,7 +180,52 @@
 			controls = new THREE.OrbitControls( camera );
 			controls.addEventListener( 'change', Render );
 			
-			
+			//TERRAIN
+			var img = new Image();
+			img.src = "textures/heightmap2.png";
+			img.onload = function () {
+				//get height data from img
+				var data = getHeightData(img, 0.05);
+
+				var xImg = img.width;
+				var yImg = img.height;
+				//console.log("img.width and width: "+img.width+" "+img.height);
+
+				var terrain_geometry = new THREE.BoxGeometry(1,1,1);
+				var terrain_material = new THREE.MeshBasicMaterial( { color: "#6f594d"} );
+				
+				var terrain_edges_geo = new THREE.EdgesGeometry( terrain_geometry ); 
+				var terrain_edges_mat = new THREE.LineBasicMaterial( { color: "#d9b071", linewidth: 2 } );
+
+				var k = 0; //indice di data
+				var i = 0, j = 0;
+				var terrain_group = new THREE.Object3D();
+				terrain_group.position.y = -20;
+				terrain_group.position.x = -img.width/2;
+				terrain_group.position.y = -img.height/2;
+
+				scene.add(terrain_group);
+
+				for(i=0; i<xImg; i++){
+					for(j=0; j<yImg; j++){
+						//console.log("for i j "+i+" "+j);
+						terrain_cube = new THREE.Mesh( terrain_geometry, terrain_material );
+						console.log("data[k], k: "+ data[k] +" "+k);
+
+						terrain_cube.matrix.makeTranslation(i+1, data[k]/2 ,j); //traslo in su di data[k]/2 perché poi scalerò la dimensione y
+						var scaleM = new THREE.Matrix4().makeScale(1, data[k] ,1);
+						terrain_cube.matrix.multiplyMatrices ( terrain_cube.matrix, scaleM); 
+						terrain_cube.matrixAutoUpdate = false;
+						terrain_group.add(terrain_cube);
+
+						//disegno gli spigoli
+						var terrain_cube_edges = new THREE.LineSegments( terrain_edges_geo, terrain_edges_mat );
+						terrain_cube.add( terrain_cube_edges );
+
+						k++;
+					}
+				}
+			}
 		}
 		
 
