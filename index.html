@@ -301,7 +301,7 @@
 					if( current.name == "islandNight" ){
 						//aggiorno delta: tempo passato da quando è iniziato il mouseover su islandNight
 						time2 += delta;
-						//faccio ruotare islandNight a una velocità proporzionale alla durata del mouseover
+						//faccio ruotare islandNight: velocità e verso variano e dipendono da time2
 						var m = new THREE.Matrix4().makeRotationY( time2*0.3 );
 						current.matrix.multiplyMatrices ( current.matrix, m );
 						//diminuisco intensità luci
@@ -318,8 +318,7 @@
 					}else if( current.name == "islandDay" ){
 						//aggiorno delta: tempo passato da quando è iniziato il mouseover su islandDay
 						time3 += delta;
-						console.log("time day: "+time3);
-						//faccio ruotare islandDay a una velocità proporzionale alla durata del mouseover
+						//faccio ruotare islandDay: velocità e verso variano e dipendono da time3
 						var m = new THREE.Matrix4().makeRotationX( time3*0.3 );
 						current.matrix.multiplyMatrices ( current.matrix, m );
 						//aumento intensità luci
