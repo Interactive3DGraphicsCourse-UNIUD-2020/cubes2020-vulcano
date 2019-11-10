@@ -95,7 +95,7 @@
 			renderer.shadowMap.enabled = true;
 			document.body.appendChild( renderer.domElement );
 			
-			camera.position.set(0,5,27);
+			camera.position.set( 0, 0, 32 );
 			camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 
 
@@ -111,6 +111,7 @@
 		
 					skullIsland.position.y = 3;
 					skullIsland.rotation.y = -90 * Math.PI/180;
+					skullIsland.rotation.x = 7 * Math.PI/180;
 
 					skullIsland.castShadow = true;
 					skullIsland.receiveShadow = true;
@@ -229,7 +230,7 @@
 				var terrain_edges_mat = new THREE.LineBasicMaterial( { color: "#a39b98", linewidth: 1 } );
 				
 				var terrain_group = new THREE.Object3D(); //oggetto a cui aggiungerò tutti i cubi che compongono il terreno
-				terrain_group.position.set( -img.width*1.5/2, -55, -img.height*1.5-24 );
+				terrain_group.position.set( -img.width*1.5/2, -38, -24 );
 
 				scene.add( terrain_group );
 
