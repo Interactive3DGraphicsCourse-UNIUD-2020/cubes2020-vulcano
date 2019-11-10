@@ -46,5 +46,9 @@
 - decisione di eliminare gli orbit controls perché non ritenuti adatti alla scena dal punto di visto dell'esperienza utente: guardare da vicino le isole potrebbe diminuire l'aura di mistero in cui sono immerse.
 
 # 10 novembre
+- aggiunto testo:
+
+![scena completa con testo](https://github.com/Interactive3DGraphicsCourse-UNIUD-2020/cubes2020-vulcano/blob/master/screenshots/Scene_with_text.png)
+
 - decisione di non eliminare completamente gli orbit controls: disibalitata l'opzione di zoom e la rotazione attorno all'asse X;
 - stesura file readme.
