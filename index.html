@@ -32,6 +32,7 @@
 		</style>
 		<script src="lib/three.min.js"></script>
 		<script src="lib/stats.min.js"></script>
+		<script src="lib/OrbitControls.js"></script>
 		<link href="https://fonts.googleapis.com/css?family=Antic&display=swap" rel="stylesheet">
 
 	</head>
@@ -202,6 +203,15 @@
 			document.body.appendChild( stats.domElement );
 		
 			
+			//ORBIT CONTROLS
+			controls = new THREE.OrbitControls( camera );
+			controls.enableZoom = false; //disabilito lo zoom
+			//imposto stesso valore per min e max polar angle così da fissare la rotazione verticale e permettere solo quella orizzontale
+			controls.minPolarAngle = Math.PI/2;
+			controls.maxPolarAngle = Math.PI/2;
+			controls.addEventListener( 'change', Render );
+
+
 			//TERRAIN
 			var img = new Image();
 			img.src = "textures/heightmap_terreno.png";
