@@ -46,5 +46,5 @@
 - decisione di eliminare gli orbit controls perché non ritenuti adatti alla scena dal punto di visto dell'esperienza utente: guardare da vicino le isole potrebbe diminuire l'aura di mistero in cui sono immerse.
 
 # 10 novembre
-- decisione di non eliminare completamente gli orbit controls: disibalitata l'opzione di zoom e la rotazione lungo l'asse X;
+- decisione di non eliminare completamente gli orbit controls: disibalitata l'opzione di zoom e la rotazione attorno all'asse X;
 - stesura file readme.
