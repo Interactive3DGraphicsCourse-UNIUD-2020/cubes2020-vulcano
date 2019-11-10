@@ -199,10 +199,10 @@
 				var yImg = img.height;
 				
 				var terrain_geometry = new THREE.BoxGeometry( 1.5, 1.5, 1.5 );
-				var terrain_material = new THREE.MeshPhongMaterial( { bumpMap: island_texture, bumpScale: 0.5, color: "#80543d"} );
+				var terrain_material = new THREE.MeshPhongMaterial( { bumpMap: island_texture, bumpScale: 4, color: "#80543d"} );
 				//definisco geometria e materiale anche per gli spigoli
 				var terrain_edges_geo = new THREE.EdgesGeometry( terrain_geometry ); 
-				var terrain_edges_mat = new THREE.LineBasicMaterial( { color: "#d9b071", linewidth: 2 } );
+				var terrain_edges_mat = new THREE.LineBasicMaterial( { color: "#a39b98", linewidth: 1 } );
 				
 				var terrain_group = new THREE.Object3D(); //oggetto a cui aggiungerò tutti i cubi che compongono il terreno
 				terrain_group.position.set( -img.width*1.5/2, -55, -img.height*1.5-24 );
