@@ -37,9 +37,9 @@
 
 ![Alt text](https://github.com/Interactive3DGraphicsCourse-UNIUD-2020/cubes2020-vulcano/blob/master/screenshots/Scene_final.png)
 
-- problema: browser restituisce warning: capita più volte che il determinante di un qualche matrice sia 0 e che dunque non si riesca a calcolarne l'inversa. Sospetto che succeda durante la generazione del terreno.
+- problema: browser restituisce warning: capita più volte che il determinante di una qualche matrice sia 0 e che dunque non si riesca a calcolarne l'inversa. Sospetto che succeda durante la generazione del terreno.
 
 # 9 novembre
-- risolto problema determinante uguale a 0: tentavo di impostare il valore dato dalla heightmap per un certo cubo come fattore di scala per la scalatura anche quando tale valore era uguale a zero. Ho risolto aggiungeno un controllo: se il valore è uguale a zero, la scalatura non viene eseguita;
+- risolto problema determinante uguale a 0: tentavo di impostare il valore dato dalla heightmap per un certo cubo come fattore di scala per la scalatura anche quando tale valore era uguale a zero. Ho risolto aggiungendo un controllo: se il valore è uguale a zero, la scalatura non viene eseguita;
 - risolto problema warning texture: ridimensionate le texture del modello dell'isola grande e sostituite alle precedenti tramite l'editor.
 - revisione codice e aggiunta di commenti.
