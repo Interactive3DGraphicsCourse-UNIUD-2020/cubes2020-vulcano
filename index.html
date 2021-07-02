@@ -123,12 +123,12 @@
 					loadingComplete = true;
 				},
 
-				//onProgress callback
+				// onProgress callback
 				function ( xhr ) {
 					console.log("Island 3D model " + (xhr.loaded / xhr.total * 100) + '% loaded');
 				},
 
-				//onError callback
+				// onError callback
 				function ( err ) {
 					console.error('An error happened');
 				}
@@ -160,7 +160,7 @@
 
 			// isoletta notte
 			night = new THREE.Mesh(island_geometry, island_material1);
-			night.name = "islandNight"; //assegno nome per poter identificare l'oggetto
+			night.name = "islandNight"; // assegno nome per poter identificare l'oggetto
 			night.castShadow = true;
 			night.receiveShadow = true;
 			night.matrix.makeTranslation(11,0,0);
@@ -209,7 +209,7 @@
 			
 			// ORBIT CONTROLS
 			controls = new THREE.OrbitControls(camera);
-			controls.enableZoom = false; //disabilito lo zoom
+			controls.enableZoom = false; // disabilito lo zoom
 			// imposto stesso valore per min e max polar angle così da fissare la rotazione verticale e permettere solo quella orizzontale
 			controls.minPolarAngle = Math.PI/2;
 			controls.maxPolarAngle = Math.PI/2;
@@ -221,7 +221,7 @@
 			img.src = "textures/heightmap_terreno.png";
 			img.onload = function(){
 
-				var data = getHeightData(img, 0.05); //estraggo height data dall'immagine
+				var data = getHeightData(img, 0.05); // estraggo height data dall'immagine
 
 				var xImg = img.width;
 				var yImg = img.height;
@@ -337,7 +337,7 @@
 					}
 
 				}else{
-					// al primo frame in cui mouse non è più su una delle isolette, resetto variabili time2 e time3
+					// al primo frame in cui mouse non è più su una delle isolette resetto variabili time2 e time3
 					time2 = 0;
 					time3 = 0;
 				}
