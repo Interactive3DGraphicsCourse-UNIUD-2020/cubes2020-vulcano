@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>1st Project 2019 - Vulcano</title>
+		<title>1st Project - Vulcano</title>
 		<style>
 		
 		body {
@@ -45,35 +45,38 @@
 		var raycaster, mouse;
 		var night, day;
 
-		var loadingComplete = false; //true quando terminato caricamento del modello dell'isola grande
+		var loadingComplete = false; // true quando terminato caricamento del modello dell'isola grande
 
 
 
-		//CALCOLO HEIGHT DATA
+		// CALCOLO HEIGHT DATA
 		function getHeightData(img,scale) {
 
 			if ( scale == undefined ) scale=1;
  
-		    var canvas = document.createElement( 'canvas' );
+		    var canvas = document.createElement('canvas');
 		    canvas.width = img.width;
 		    canvas.height = img.height;
 
-		    var context = canvas.getContext( '2d' );
+		    var context = canvas.getContext('2d'); // oggetto con proprietà e funzioni per disegnare sul canvas
 		    var size = img.width * img.height;
-		    var data = new Float32Array( size );
-		    context.drawImage(img,0,0);
+		    var data = new Float32Array(size);
+		    context.drawImage(img,0,0);            // disegno immagine sul canvas
  
+			// inizializzo data a 0
+			// alla fine della funzione data conterrà le altezze di ogni blocchetto che costituirà il terreno
 		    for ( var i = 0; i < size; i ++ ) {
 		        data[i] = 0;
 		    }
  
-		    var imgd = context.getImageData(0, 0, img.width, img.height); //copia pixel data (valori R, G, B, A) di una certa area del canvas
+		    var imgd = context.getImageData(0, 0, img.width, img.height); // copia dei dati dei pixel (valori R, G, B, A) di una certa area del canvas
 		    var pix = imgd.data; //array che contiene i dati (elementi 0, 1, 2, 3 relativi al primo pixel; 4, 5, 6, 7 al secondo ecc.)
 			
 		    var j=0;
 		    for ( var i = 0; i < pix.length; i +=4 ) {
-				var all = pix[i]+pix[i+1]+pix[i+2]; // all (R + G + B) è nel range 0 - 255*3 (e R = G = B)
-				data[j++] = scale*all/3;
+				// per ogni pixel prendo il suo valore R (si ha che R = G = B) e lo moltiplico per scale
+				var all = pix[i];
+				data[j++] = scale*all;
 		    }
 			     
 		    return data;
@@ -88,7 +91,7 @@
 			renderer = new THREE.WebGLRenderer( { antialias: true, alpha:true } );
 
 			renderer.setSize( window.innerWidth, window.innerHeight );
-			renderer.setClearColor( "#1a053a", 0 ); //opacità 0 al caricamento, può essere cambiata interattivamente
+			renderer.setClearColor( "#1a053a", 0 ); // opacità 0 al caricamento, può essere cambiata interattivamente
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.gammaInput = true;
 			renderer.gammaOutput = true;
@@ -99,13 +102,13 @@
 			camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 
 
-			//CARICAMENTO MODELLO ISOLA GRANDE
+			// CARICAMENTO MODELLO ISOLA GRANDE
 			var loader = new THREE.ObjectLoader();
 			loader.load(
-				//path del modello
+				// path del modello
 				"models/isola.json",
 
-				//onLoad callback
+				// onLoad callback
 				function ( obj ) {
 					skullIsland = obj;
 		
@@ -122,138 +125,138 @@
 
 				//onProgress callback
 				function ( xhr ) {
-					console.log( "Island 3D model " + (xhr.loaded / xhr.total * 100) + '% loaded' );
+					console.log("Island 3D model " + (xhr.loaded / xhr.total * 100) + '% loaded');
 				},
 
 				//onError callback
 				function ( err ) {
-					console.error( 'An error happened' );
+					console.error('An error happened');
 				}
 			);
 			
 
-			//ALTRI OGGETTI
+			// ALTRI OGGETTI
 
-			//pivot delle isolette
+			// pivot delle isolette
 			pivot1 = new THREE.Object3D();
-			pivot1.matrix.makeTranslation( 0, 1, 0 );
-			var pivotRotMatrix1 = new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 0, 0, 1 ), 8*Math.PI/180 );
-			pivot1.matrix.multiplyMatrices ( pivot1.matrix, pivotRotMatrix1 ); 
+			pivot1.matrix.makeTranslation(0, 1, 0);
+			var pivotRotMatrix1 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3( 0, 0, 1 ), 8*Math.PI/180);
+			pivot1.matrix.multiplyMatrices (pivot1.matrix, pivotRotMatrix1); 
 			pivot1.matrixAutoUpdate = false;
-			scene.add( pivot1 );
+			scene.add(pivot1);
 
 			pivot2 = new THREE.Object3D();
 			pivot2.matrix.makeTranslation( 0, -4, 0 );
-			var pivotRotMatrix2 = new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 0, 0, 1 ), -5*Math.PI/180 );
-			pivot2.matrix.multiplyMatrices ( pivot2.matrix, pivotRotMatrix2 ); 
+			var pivotRotMatrix2 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3( 0, 0, 1 ), -5*Math.PI/180);
+			pivot2.matrix.multiplyMatrices (pivot2.matrix, pivotRotMatrix2); 
 			pivot2.matrixAutoUpdate = false;
-			scene.add( pivot2 );
+			scene.add(pivot2);
 
-			//isolette
-			var island_geometry = new THREE.BoxGeometry( 1, 1, 1 );
+			// isolette
+			var island_geometry = new THREE.BoxGeometry(1, 1, 1);
 			var island_texture = new THREE.TextureLoader().load('textures/stone.jpg');
-			var island_material1 = new THREE.MeshPhongMaterial( { bumpMap: island_texture, bumpScale: 0.04, color:"#6f594d" } );
-			var island_material2 = new THREE.MeshPhongMaterial( { bumpMap: island_texture, bumpScale: 0.04 } );
+			var island_material1 = new THREE.MeshPhongMaterial({ bumpMap: island_texture, bumpScale: 0.04, color:"#6f594d" });
+			var island_material2 = new THREE.MeshPhongMaterial({ bumpMap: island_texture, bumpScale: 0.04 });
 
-			//isoletta notte
-			night = new THREE.Mesh( island_geometry, island_material1 );
+			// isoletta notte
+			night = new THREE.Mesh(island_geometry, island_material1);
 			night.name = "islandNight"; //assegno nome per poter identificare l'oggetto
 			night.castShadow = true;
 			night.receiveShadow = true;
 			night.matrix.makeTranslation(11,0,0);
             var islandScaleMatrix = new THREE.Matrix4().makeScale(1.7,1,1.7);
-			night.matrix.multiplyMatrices ( night.matrix, islandScaleMatrix);
+			night.matrix.multiplyMatrices (night.matrix, islandScaleMatrix);
 			night.matrixAutoUpdate = false;
-			pivot1.add( night );
+			pivot1.add(night);
 
-			//isoletta giorno
-			day = new THREE.Mesh( island_geometry, island_material2 );
+			// isoletta giorno
+			day = new THREE.Mesh(island_geometry, island_material2);
 			day.name = "islandDay";
 			day.castShadow = true;
 			day.receiveShadow = true;
 			day.matrix.makeTranslation(-11,0,0);
-			day.matrix.multiplyMatrices ( day.matrix, islandScaleMatrix);
+			day.matrix.multiplyMatrices (day.matrix, islandScaleMatrix);
 			day.matrixAutoUpdate = false;
-			pivot2.add( day );
+			pivot2.add(day);
 
 
-			//LUCI
-			hemiLight = new THREE.HemisphereLight( "#f0c9f5", "#353678", 0.3 );
-			hemiLight.position.set( -100, -500, 100 );
-			scene.add( hemiLight );
+			// LUCI
+			hemiLight = new THREE.HemisphereLight("#f0c9f5", "#353678", 0.3);
+			hemiLight.position.set(-100, -500, 100);
+			scene.add(hemiLight);
 
-			dirLight = new THREE.DirectionalLight( "#fff7d4", 0.4 );
-			dirLight.position.set( -1, -8, 6 );
-			dirLight.position.multiplyScalar( 50 );
-			scene.add( dirLight );
+			dirLight = new THREE.DirectionalLight("#fff7d4", 0.4);
+			dirLight.position.set(-1, -8, 6);
+			dirLight.position.multiplyScalar(50);
+			scene.add(dirLight);
 			dirLight.castShadow = true;
 			dirLight.shadow.mapSize.width = 1024;
 			dirLight.shadow.mapSize.height = 1024;
 			
 
-			//ANIMAZIONI MOUSEOVER
+			// ANIMAZIONI MOUSEOVER
 			raycaster = new THREE.Raycaster();
 			mouse = new THREE.Vector2();
-			window.addEventListener( 'mousemove', onMouseMove, false );
+			window.addEventListener('mousemove', onMouseMove, false);
 
 
-			//STATS
+			// STATS
 			stats = new Stats();
 			stats.domElement.style.position = 'absolute';
 			stats.domElement.style.top = '0px';
-			document.body.appendChild( stats.domElement );
+			document.body.appendChild(stats.domElement);
 		
 			
-			//ORBIT CONTROLS
-			controls = new THREE.OrbitControls( camera );
+			// ORBIT CONTROLS
+			controls = new THREE.OrbitControls(camera);
 			controls.enableZoom = false; //disabilito lo zoom
-			//imposto stesso valore per min e max polar angle così da fissare la rotazione verticale e permettere solo quella orizzontale
+			// imposto stesso valore per min e max polar angle così da fissare la rotazione verticale e permettere solo quella orizzontale
 			controls.minPolarAngle = Math.PI/2;
 			controls.maxPolarAngle = Math.PI/2;
-			controls.addEventListener( 'change', Render );
+			controls.addEventListener('change', Render);
 
 
-			//TERRAIN
+			// TERRAIN
 			var img = new Image();
 			img.src = "textures/heightmap_terreno.png";
-			img.onload = function () {
+			img.onload = function(){
 
-				var data = getHeightData( img, 0.05 ); //estraggo height data dall'immagine
+				var data = getHeightData(img, 0.05); //estraggo height data dall'immagine
 
 				var xImg = img.width;
 				var yImg = img.height;
 				
-				var terrain_geometry = new THREE.BoxGeometry( 1.5, 1.5, 1.5 );
-				var terrain_material = new THREE.MeshPhongMaterial( { bumpMap: island_texture, bumpScale: 4, color: "#80543d"} );
-				//definisco geometria e materiale anche per gli spigoli
-				var terrain_edges_geo = new THREE.EdgesGeometry( terrain_geometry ); 
-				var terrain_edges_mat = new THREE.LineBasicMaterial( { color: "#a39b98", linewidth: 1 } );
+				var terrain_geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+				var terrain_material = new THREE.MeshPhongMaterial({ bumpMap: island_texture, bumpScale: 4, color: "#80543d"});
+				// definisco geometria e materiale anche per gli spigoli
+				var terrain_edges_geo = new THREE.EdgesGeometry(terrain_geometry); 
+				var terrain_edges_mat = new THREE.LineBasicMaterial({ color: "#a39b98", linewidth: 1 });
 				
-				var terrain_group = new THREE.Object3D(); //oggetto a cui aggiungerò tutti i cubi che compongono il terreno
-				terrain_group.position.set( -img.width*1.5/2, -38, -24 );
+				var terrain_group = new THREE.Object3D(); // oggetto a cui aggiungerò tutti i cubi che compongono il terreno
+				terrain_group.position.set(-img.width*1.5/2, -38, -24);
 
-				scene.add( terrain_group );
+				scene.add(terrain_group);
 
-				//genero il terreno
-				var k = 0; //indice dell'array data
+				// genero il terreno
+				var k = 0; // indice dell'array data
 				var i = 0, j = 0;
-				for( i = 0; i < yImg; i++ ){ //scorro righe di pixel dell'immagine
-					for( j = 0; j < xImg; j++ ){ //scorro colonne
+				for( i = 0; i < yImg; i++ ){     // scorro righe di pixel dell'immagine
+					for(j = 0; j < xImg; j++){   // scorro colonne
 
-						var terrain_cube = new THREE.Mesh( terrain_geometry, terrain_material );
-						terrain_cube.matrix.makeTranslation( j+j*0.5, data[k]/2, i+i*0.5 ); //traslo cubo in su di data[k]/2 perché poi scalo la sua dimensione y di data[k]
+						var terrain_cube = new THREE.Mesh(terrain_geometry, terrain_material);
+						terrain_cube.matrix.makeTranslation(j+j*0.5, data[k]/2, i+i*0.5); // traslo cubo in su di data[k]/2 perché poi scalo la sua dimensione y di data[k]
 						if( data[k] != 0 ){
 							var scaleM = new THREE.Matrix4().makeScale( 1, data[k] ,1 );
-							terrain_cube.matrix.multiplyMatrices ( terrain_cube.matrix, scaleM ); 
+							terrain_cube.matrix.multiplyMatrices (terrain_cube.matrix, scaleM); 
 						}
 						terrain_cube.matrixAutoUpdate = false;
 						terrain_cube.castShadow = true;
 						terrain_cube.receiveShadow = true
-						terrain_group.add( terrain_cube );
+						terrain_group.add(terrain_cube);
 
-						//disegno gli spigoli del cubo
-						var terrain_cube_edges = new THREE.LineSegments( terrain_edges_geo, terrain_edges_mat );
-						terrain_cube.add( terrain_cube_edges );
+						// disegno gli spigoli del cubo
+						var terrain_cube_edges = new THREE.LineSegments(terrain_edges_geo, terrain_edges_mat);
+						terrain_cube.add(terrain_cube_edges);
 
 						k++;
 					}
@@ -263,14 +266,14 @@
 		
 
 
-		//CALCOLO POSIZIONE MOUSE
-		function onMouseMove( event ) {
-			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+		// CALCOLO POSIZIONE MOUSE
+		function onMouseMove(event) {
+			mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+			mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 		}
 
 
-		//ANIMAZIONI
+		// ANIMAZIONI
 		var clock = new THREE.Clock();
 		var time = 0;
 		var time2 = 0;
@@ -280,53 +283,53 @@
 
 		function Update() {
 
-			requestAnimationFrame( Update );
+			requestAnimationFrame(Update);
 
-			if( loadingComplete ){ //se il caricamento del modello dell'isola grande è terminato
+			if(loadingComplete){ // se il caricamento del modello dell'isola grande è terminato
 
-				//animazione lieve movimento isole
+				// animazione lieve movimento isole
 				delta = clock.getDelta();
 				time += delta;
-				skullIsland.position.y = ( Math.sin(time)+1 )/4.5;
-				pivot1.matrix.multiplyMatrices ( pivot1.matrix, new THREE.Matrix4().makeRotationY((Math.sin(time))/1100) );
-				pivot2.matrix.multiplyMatrices ( pivot2.matrix, new THREE.Matrix4().makeRotationY(-(Math.sin(time))/1300) );
+				skullIsland.position.y = (Math.sin(time)+1)/4.5;
+				pivot1.matrix.multiplyMatrices (pivot1.matrix, new THREE.Matrix4().makeRotationY((Math.sin(time))/1100));
+				pivot2.matrix.multiplyMatrices (pivot2.matrix, new THREE.Matrix4().makeRotationY(-(Math.sin(time))/1300));
 
-				//animazione notte-giorno isolette
-				raycaster.setFromCamera( mouse, camera ); //aggiorna picking ray con posizione di mouse e camera
-				var intersects = raycaster.intersectObjects( scene.children, true ); //calcola oggetti intersecati dal raggio
-				if( intersects.length > 0 ){
+				// animazione notte-giorno isolette
+				raycaster.setFromCamera(mouse, camera); // aggiorna picking ray con posizione di mouse e camera
+				var intersects = raycaster.intersectObjects(scene.children, true); // calcola oggetti intersecati dal raggio
+				if(intersects.length > 0){
 
-					var current = intersects[0].object; //mi interessa solo il primo oggetto intersecato
+					var current = intersects[0].object; // mi interessa solo il primo oggetto intersecato
 
 					if( current.name == "islandNight" ){
-						//aggiorno delta: tempo passato da quando è iniziato il mouseover su islandNight
+						// aggiorno delta: tempo passato da quando è iniziato il mouseover su islandNight
 						time2 += delta;
-						//faccio ruotare islandNight: velocità e verso variano e dipendono da time2
+						// faccio ruotare islandNight: velocità e verso variano e dipendono da time2
 						var m = new THREE.Matrix4().makeRotationY( time2*0.3 );
-						current.matrix.multiplyMatrices ( current.matrix, m );
-						//diminuisco intensità luci
+						current.matrix.multiplyMatrices (current.matrix, m);
+						// diminuisco intensità luci
 						if( dirLight.intensity > 0.15 && hemiLight.intensity > 0.15 ){
 							dirLight.intensity -= 0.006;
 							hemiLight.intensity -= 0.006;
 						}
-						//aumento opacità del colore scuro di sfondo
+						// aumento opacità del colore scuro di sfondo
 						if( alpha_background < 0.7 ){	
 							alpha_background+=0.02;
 							renderer.setClearColor( "#1a053a", alpha_background );
 						}
 
-					}else if( current.name == "islandDay" ){
-						//aggiorno delta: tempo passato da quando è iniziato il mouseover su islandDay
+					}else if(current.name == "islandDay"){
+						// aggiorno delta: tempo passato da quando è iniziato il mouseover su islandDay
 						time3 += delta;
-						//faccio ruotare islandDay: velocità e verso variano e dipendono da time3
+						// faccio ruotare islandDay: velocità e verso variano e dipendono da time3
 						var m = new THREE.Matrix4().makeRotationX( time3*0.3 );
 						current.matrix.multiplyMatrices ( current.matrix, m );
-						//aumento intensità luci
+						// aumento intensità luci
 						if( dirLight.intensity < 0.39 && hemiLight.intensity < 0.29 ){
 							dirLight.intensity += 0.01;
 							hemiLight.intensity += 0.01;
 						}
-						//diminuisco opacità del colore scuro di sfondo
+						// diminuisco opacità del colore scuro di sfondo
 						if(alpha_background > 0.01){	
 							alpha_background -= 0.01;
 							renderer.setClearColor( "#1a053a", alpha_background );
@@ -334,7 +337,7 @@
 					}
 
 				}else{
-					//al primo frame in cui mouse non è più su una delle isolette, resetto variabili time2 e time3
+					// al primo frame in cui mouse non è più su una delle isolette, resetto variabili time2 e time3
 					time2 = 0;
 					time3 = 0;
 				}
